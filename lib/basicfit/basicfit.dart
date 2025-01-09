@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:basicshare/basicfit/hardcodedgraphql.dart';
 import 'package:basicshare/basicfit/types.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
@@ -8,18 +9,60 @@ import 'package:http/http.dart' as http;
 const String IOS_CLIENT_ID = 'q6KqjlQINmjOC86rqt9JdU_i41nhD_Z4DwygpBxGiIs';
 const String IOS_USER_AGENT =
     'Basic-Fit/2436 CFNetwork/1568.300.101 Darwin/24.2.0';
+const String GRAPHQL_ACCESS_TOKEN = "wRd4zwNule_XU0IrbE-DSfF0IcFxSnDCilyboUhYLps";
 
 const String BASE_ANDROID_URL = 'https://bfa.basic-fit.com/api';
 const String BASE_URL = 'https://my.basic-fit.com';
 const String BASE_LOGIN_URL = 'https://login.basic-fit.com';
 const String BASE_AUTH_URL = 'https://auth.basic-fit.com';
+const String BASE_GRAPHQL_URL = 'https://graphql.contentful.com/content/v1/spaces/ztnn01luatek/environments/master';
 
 class BasicFit {
   final String bearerToken;
 
   BasicFit(this.bearerToken);
 
-  Future<Member?> load() async {
+  Future<List<Visit>?> loadVisits() async {
+    final Uri url = Uri.parse('$BASE_ANDROID_URL/member/gym-visits-total');
+
+    final response = await http.get(
+      url,
+      headers: <String, String>{
+        'User-Agent': IOS_USER_AGENT,
+        'Authorization': 'Bearer $bearerToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final decoded = jsonDecode(response.body);
+      final List<dynamic> visits = decoded['visits'];
+      return visits.map((visit) => Visit.fromJson(visit)).toList();
+    }
+
+    return [];
+  }
+
+  Future<Map<String, dynamic>?> loadInflux(String clubId) async {
+    final Uri url = Uri.parse(BASE_GRAPHQL_URL);
+
+    final response = await http.post(
+      url,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $GRAPHQL_ACCESS_TOKEN',
+      },
+      body: HARDCODED_GRAPHQL_REQUEST.replaceAll("%CLUB_ID%", clubId),
+    );
+
+    if (response.statusCode == 200) {
+      final graphql = jsonDecode(response.body) as Map<String, dynamic>;
+      return graphql['data']['clubCollection']['items'][0]['busynessData'];
+    }
+
+    return null;
+  }
+
+  Future<Member?> loadMember() async {
     final Uri url = Uri.parse('$BASE_ANDROID_URL/member/info');
 
     final response = await http.get(

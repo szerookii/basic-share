@@ -54,21 +54,9 @@ class LoginPage extends ConsumerWidget {
           await prefs.setInt("expires", expires);
 
           BasicFit basicFit = BasicFit(accessToken);
-          Member? member = await basicFit.load();
+          await ref.read(authNotifierProvider.notifier).initialize(accessToken, refreshToken, basicFit);
 
-          if (member == null) {
-            return;
-          }
-
-          debugPrint("[*] Access Token: $accessToken");
-          debugPrint("[*] Refresh Token: $refreshToken");
-          
-          ref.read(authNotifierProvider.notifier).setAccessToken(accessToken);
-          ref.read(authNotifierProvider.notifier).setRefreshToken(refreshToken);
-          ref.read(authNotifierProvider.notifier).setBasicFit(basicFit);
-          ref.read(authNotifierProvider.notifier).setMember(member);
-
-          Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardPage()));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
         },
         onWebViewCreated: (controller) async {
           CookieManager cookieManager = CookieManager.instance();

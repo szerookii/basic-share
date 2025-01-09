@@ -133,3 +133,27 @@ class MembershipOptions {
     };
   }
 }
+
+class Visit {
+  final String swipeDateTime;
+  final String clubName;
+  final String clubId;
+
+  Visit({required this.swipeDateTime, required this.clubName, required this.clubId});
+
+  factory Visit.fromJson(Map<String, dynamic> json) {
+    return Visit(
+      swipeDateTime: json['swipeDateTime'],
+      clubName: json['clubName'],
+      clubId: json['clubId'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'swipeDateTime': swipeDateTime,
+      'clubName': clubName,
+      'clubId': clubId,
+    };
+  }
+}

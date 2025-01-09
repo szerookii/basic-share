@@ -7,9 +7,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await initializeDateFormatting('fr_FR', null);
 
   runApp(
     const ProviderScope(
@@ -21,7 +24,7 @@ Future main() async {
 final dataProvider = FutureProvider<String>((ref) async {
   final authProvider = ref.read(authNotifierProvider.notifier);
   final prefs = await SharedPreferences.getInstance();
-  
+
   String? accessToken = prefs.getString('access_token');
   String? refreshToken = prefs.getString('refresh_token');
   final expires = prefs.getInt('expires');
@@ -41,12 +44,14 @@ final dataProvider = FutureProvider<String>((ref) async {
       if (token == null) {
         throw Exception('Failed to refresh token');
       }
-      
+
       final newAccessToken = token['access_token'];
       final newRefreshToken = token['refresh_token'];
       final expires = token['expires_in'];
 
-      if (newAccessToken == null || newRefreshToken == null || expires == null) {
+      if (newAccessToken == null ||
+          newRefreshToken == null ||
+          expires == null) {
         throw Exception('Failed to get new tokens');
       }
 
@@ -62,19 +67,10 @@ final dataProvider = FutureProvider<String>((ref) async {
       accessToken = newAccessToken;
       refreshToken = newRefreshToken;
     }
-    
-    final basicFit = BasicFit(accessToken as String);
-    final member = await basicFit.load();
 
-    if (member == null) {
-      throw Exception('Failed to load member');
-    }
-    
-    authProvider.setAccessToken(accessToken);
-    authProvider.setRefreshToken(refreshToken as String);
-    authProvider.setBasicFit(basicFit);
-    authProvider.setMember(member);
-    
+    final basicFit = BasicFit(accessToken as String);
+    await ref.read(authNotifierProvider.notifier).initialize(accessToken, refreshToken as String, basicFit);
+
     return "";
   }
 });
@@ -88,17 +84,17 @@ class MyApp extends ConsumerWidget {
 
     return Sizer(builder: (context, orientation, screenType) {
       return MaterialApp(
-        title: 'BasicShare',
-        theme: ThemeData.dark(),
-        home: data.when(
-          data: (value) => const DashboardPage(),
-          loading: () => const Center(child: SpinKitChasingDots(color: Colors.white)),
-          error: (error, stack) {
-            debugPrint('[*] Error: $error');
-            return const LoginPage();
-          },
-        )
-      );
+          title: 'BasicShare',
+          theme: ThemeData.dark(),
+          home: data.when(
+            data: (value) => const DashboardPage(),
+            loading: () =>
+                const Center(child: SpinKitChasingDots(color: Colors.white)),
+            error: (error, stack) {
+              debugPrint('[*] Error: $error');
+              return const LoginPage();
+            },
+          ));
     });
   }
 }

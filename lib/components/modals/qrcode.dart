@@ -97,7 +97,7 @@ class QrcodeModalState extends ConsumerState<QrcodeModal> with SingleTickerProvi
                     return LinearProgressIndicator(
                       value: _animation.value,
                       backgroundColor: Colors.white30,
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.orangeAccent),
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
                     );
                   },
                 ),

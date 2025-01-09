@@ -24,6 +24,8 @@ dependencies:
       url: https://github.com/szerookii/qr.flutter.git
       ref: 63ce311d8ce2e0d46a7e8a00f56e164fbeaf4332
   screen_brightness: ^2.0.1
+  intl: ^0.20.1
+  fl_chart: ^0.70.1
 
 dev_dependencies:
   build_runner:
