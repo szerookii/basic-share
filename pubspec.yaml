@@ -1,7 +1,7 @@
-name: basic_share
-description: "A new Flutter project."
+name: basicshare
+description: "A simple app around Basic-Fit"
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0+1
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -10,10 +10,30 @@ dependencies:
   flutter:
     sdk: flutter
 
+  http: any
+  shared_preferences: ^2.0.8
+  flutter_spinkit: ^5.2.1
+  cupertino_icons: ^1.0.6
+  sizer: ^3.0.3
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+  flutter_inappwebview: ^6.1.5
+  crypto: ^3.0.6
+  qr_flutter:
+    git:
+      url: https://github.com/szerookii/qr.flutter.git
+      ref: 63ce311d8ce2e0d46a7e8a00f56e164fbeaf4332
+  screen_brightness: ^2.0.1
+
 dev_dependencies:
+  build_runner:
+  custom_lint:
+  riverpod_generator: ^2.6.3
+  riverpod_lint: ^2.6.3
+
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true

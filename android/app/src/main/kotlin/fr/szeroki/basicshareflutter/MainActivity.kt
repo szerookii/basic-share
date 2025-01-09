@@ -1,4 +1,4 @@
-package com.example.basic_share
+package fr.szeroki.basicshare
 
 import io.flutter.embedding.android.FlutterActivity
 
