@@ -22,6 +22,7 @@ class LoginPage extends ConsumerWidget {
         body: SafeArea(
       child: InAppWebView(
         onReceivedError: (controller, request, error) async {
+          debugPrint("[*] Error: $error");
           if (!request.url
                   .toString()
                   .contains("com.basicfit.bfa:/oauthredirect?") &&

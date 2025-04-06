@@ -79,9 +79,9 @@ class Member {
       latestMembershipStartDate: json['latestMembershipStartDate'] as String,
       latestMembershipEndDate: json['latestMembershipEndDate'] as String,
       hasDebt: json['hasDebt'] as bool,
-      membershipOptions: MembershipOptions.fromJson(
-        json['membershipOptions'] as Map<String, dynamic>,
-      ),
+      membershipOptions: json['membershipOptions'] != null
+          ? MembershipOptions.fromJson(json['membershipOptions'])
+          : MembershipOptions(linkedServices: []),
     );
   }
 
