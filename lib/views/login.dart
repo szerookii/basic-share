@@ -1,6 +1,5 @@
 import 'package:basicshare/basicfit/basicfit.dart';
 import 'package:basicshare/basicfit/oauth.dart';
-import 'package:basicshare/basicfit/types.dart';
 import 'package:basicshare/state/auth.dart';
 import 'package:basicshare/views/dashboard.dart';
 import 'package:flutter/material.dart';

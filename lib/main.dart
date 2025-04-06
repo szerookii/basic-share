@@ -21,8 +21,7 @@ Future main() async {
   );
 }
 
-final dataProvider = FutureProvider<String>((ref) async {
-  final authProvider = ref.read(authNotifierProvider.notifier);
+final dataProvider = FutureProvider<bool>((ref) async {
   final prefs = await SharedPreferences.getInstance();
 
   String? accessToken = prefs.getString('access_token');
@@ -71,7 +70,7 @@ final dataProvider = FutureProvider<String>((ref) async {
     final basicFit = BasicFit(accessToken as String);
     await ref.read(authNotifierProvider.notifier).initialize(accessToken, refreshToken as String, basicFit);
 
-    return "";
+    return true;
   }
 });
 
@@ -88,8 +87,7 @@ class MyApp extends ConsumerWidget {
           theme: ThemeData.dark(),
           home: data.when(
             data: (value) => const DashboardPage(),
-            loading: () =>
-                const Center(child: SpinKitChasingDots(color: Colors.white)),
+            loading: () => const Center(child: SpinKitDancingSquare(color: Colors.white)),
             error: (error, stack) {
               debugPrint('[*] Error: $error');
               return const LoginPage();
