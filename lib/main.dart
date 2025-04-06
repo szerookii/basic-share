@@ -14,6 +14,15 @@ Future main() async {
 
   await initializeDateFormatting('fr_FR', null);
 
+  /*QuickSettings.setup(
+    onTileAdded: (tile) {
+      debugPrint('[*] Tile added: $tile');
+      tile.label = 'BasicShare';
+      tile.subtitle = 'Afficher le QRCode';
+      return tile;
+    },
+  );*/
+
   runApp(
     const ProviderScope(
       child: MyApp(),
@@ -68,7 +77,9 @@ final dataProvider = FutureProvider<bool>((ref) async {
     }
 
     final basicFit = BasicFit(accessToken as String);
-    await ref.read(authNotifierProvider.notifier).initialize(accessToken, refreshToken as String, basicFit);
+    await ref
+        .read(authNotifierProvider.notifier)
+        .initialize(accessToken, refreshToken as String, basicFit);
 
     return true;
   }
@@ -87,7 +98,8 @@ class MyApp extends ConsumerWidget {
           theme: ThemeData.dark(),
           home: data.when(
             data: (value) => const DashboardPage(),
-            loading: () => const Center(child: SpinKitThreeBounce(color: Colors.white)),
+            loading: () =>
+                const Center(child: SpinKitThreeBounce(color: Colors.white)),
             error: (error, stack) {
               debugPrint('[*] Error: $error');
               return const LoginPage();
