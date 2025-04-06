@@ -87,7 +87,7 @@ class MyApp extends ConsumerWidget {
           theme: ThemeData.dark(),
           home: data.when(
             data: (value) => const DashboardPage(),
-            loading: () => const Center(child: SpinKitDancingSquare(color: Colors.white)),
+            loading: () => const Center(child: SpinKitThreeBounce(color: Colors.white)),
             error: (error, stack) {
               debugPrint('[*] Error: $error');
               return const LoginPage();
