@@ -1,3 +1,4 @@
+import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:basicshare/basicfit/basicfit.dart';
 import 'package:basicshare/state/auth.dart';
 import 'package:basicshare/views/dashboard.dart';
@@ -10,9 +11,15 @@ import 'package:sizer/sizer.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 Future main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();  
+
+  await Aptabase.init("A-SH-4538533721", const InitOptions(
+    host: "https://analytics.szeroki.fr",
+  ));
 
   await initializeDateFormatting('fr_FR', null);
+
+  await Aptabase.instance.trackEvent("app_opened");
 
   /*QuickSettings.setup(
     onTileAdded: (tile) {

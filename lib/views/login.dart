@@ -1,3 +1,4 @@
+import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:basicshare/basicfit/basicfit.dart';
 import 'package:basicshare/basicfit/oauth.dart';
 import 'package:basicshare/state/auth.dart';
@@ -16,6 +17,8 @@ class LoginPage extends ConsumerWidget {
     final state = generateCodeVerifier();
     final codeChallenge = generateCodeChallenge(codeVerifier);
     final oauthUri = buildOauthURL(state, codeChallenge);
+
+    Aptabase.instance.trackEvent("login_opened");
 
     return Scaffold(
         body: SafeArea(

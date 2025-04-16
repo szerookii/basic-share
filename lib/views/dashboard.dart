@@ -1,3 +1,4 @@
+import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:basicshare/components/layout/days.dart';
 import 'package:basicshare/components/layout/influence.dart';
 import 'package:basicshare/components/modals/qrcode.dart';
@@ -20,6 +21,10 @@ class DashboardPageState extends ConsumerState<DashboardPage>
   @override
   Widget build(BuildContext context) {
     final basicFit = ref.watch(authNotifierProvider);
+
+    Aptabase.instance.trackEvent("dashboard_opened", {
+      "name": basicFit.member?.firstname,
+    });
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(

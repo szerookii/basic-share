@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:basicshare/basicfit/hardcodedgraphql.dart';
 import 'package:basicshare/basicfit/types.dart';
 import 'package:crypto/crypto.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 const String IOS_CLIENT_ID = 'q6KqjlQINmjOC86rqt9JdU_i41nhD_Z4DwygpBxGiIs';
