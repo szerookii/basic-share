@@ -1,7 +1,6 @@
-import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:basicshare/basicfit/basicfit.dart';
 import 'package:basicshare/state/auth.dart';
-import 'package:basicshare/views/dashboard.dart';
+import 'package:basicshare/components/layout/main_navigation.dart';
 import 'package:basicshare/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,15 +10,11 @@ import 'package:sizer/sizer.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 Future main() async {
-  WidgetsFlutterBinding.ensureInitialized();  
-
-  await Aptabase.init("A-SH-4538533721", const InitOptions(
-    host: "https://analytics.szeroki.fr",
-  ));
+  WidgetsFlutterBinding.ensureInitialized();
 
   await initializeDateFormatting('fr_FR', null);
 
-  await Aptabase.instance.trackEvent("app_opened");
+  debugPrint('[*] App started');
 
   /*QuickSettings.setup(
     onTileAdded: (tile) {
@@ -98,20 +93,35 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final data = ref.watch(dataProvider);
+    final auth = ref.watch(authNotifierProvider);
 
     return Sizer(builder: (context, orientation, screenType) {
       return MaterialApp(
-          title: 'BasicShare',
-          theme: ThemeData.dark(),
-          home: data.when(
-            data: (value) => const DashboardPage(),
-            loading: () =>
-                const Center(child: SpinKitThreeBounce(color: Colors.white)),
-            error: (error, stack) {
-              debugPrint('[*] Error: $error');
-              return const LoginPage();
-            },
-          ));
+        title: 'BasicShare',
+        theme: ThemeData.dark(),
+        home: data.when(
+          data: (value) {
+            if (auth.member == null) {
+              return const Scaffold(
+                body: Center(
+                  child: Text(
+                    "Vous devez être connecté pour utiliser l'app",
+                    style: TextStyle(fontSize: 20, color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
+            return const MainNavigation();
+          },
+          loading: () =>
+              const Center(child: SpinKitThreeBounce(color: Colors.white)),
+          error: (error, stack) {
+            debugPrint('[*] Error: $error');
+            return const LoginPage();
+          },
+        ),
+      );
     });
   }
 }

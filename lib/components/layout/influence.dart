@@ -24,40 +24,39 @@ class _LineChartSample2State extends State<LineChartSample2> {
     return Stack(
       children: <Widget>[
         Card(
-            elevation: 8,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Padding(
-              padding: EdgeInsets.only(left: 5.w, right: 5.w, top: 2.h),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        "AFLUENCE AUJOURD'HUI",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Padding(
+            padding: EdgeInsets.only(left: 5.w, right: 5.w, top: 2.h),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      "AFFLUENCE AUJOURD'HUI",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: 1.5.h),
+                AspectRatio(
+                  aspectRatio: 2,
+                  child: LineChart(
+                    mainData(),
                   ),
-                  SizedBox(height: 1.5.h),
-                  AspectRatio(
-                    aspectRatio: 2,
-                    child: 
-                      LineChart(
-                        mainData(),
-                      ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
         ),
       ],
     );

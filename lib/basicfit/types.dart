@@ -1,3 +1,42 @@
+class HealthMeasurement {
+  final DateTime date;
+  final String id;
+  final double? fat;
+  final double? muscle;
+  final double? bone;
+  final double? water;
+  final double? weight;
+  final double? calories;
+  final double? height;
+
+  HealthMeasurement({
+    required this.date,
+    required this.id,
+    this.fat,
+    this.muscle,
+    this.bone,
+    this.water,
+    this.weight,
+    this.calories,
+    this.height,
+  });
+
+  factory HealthMeasurement.fromJson(Map<String, dynamic> json) {
+    double? parseNum(dynamic v) => v == null ? null : (v as num).toDouble();
+    return HealthMeasurement(
+      date: DateTime.parse(json['date'] as String),
+      id: json['id'] as String,
+      fat: parseNum(json['fat']),
+      muscle: parseNum(json['muscle']),
+      bone: parseNum(json['bone']),
+      water: parseNum(json['water']),
+      weight: parseNum(json['weight']),
+      calories: parseNum(json['calories']),
+      height: parseNum(json['height']),
+    );
+  }
+}
+
 class Member {
   final String name;
   final List<String> addOns;
@@ -123,7 +162,8 @@ class MembershipOptions {
 
   factory MembershipOptions.fromJson(Map<String, dynamic> json) {
     return MembershipOptions(
-      linkedServices: List<String>.from(json['LinkedServices'] as List<dynamic>),
+      linkedServices:
+          List<String>.from(json['LinkedServices'] as List<dynamic>),
     );
   }
 
@@ -139,7 +179,10 @@ class Visit {
   final String clubName;
   final String clubId;
 
-  Visit({required this.swipeDateTime, required this.clubName, required this.clubId});
+  Visit(
+      {required this.swipeDateTime,
+      required this.clubName,
+      required this.clubId});
 
   factory Visit.fromJson(Map<String, dynamic> json) {
     return Visit(
@@ -156,4 +199,13 @@ class Visit {
       'clubId': clubId,
     };
   }
+}
+
+class TokenExpiredException implements Exception {
+  final String message;
+
+  TokenExpiredException(this.message);
+
+  @override
+  String toString() => 'TokenExpiredException: $message';
 }

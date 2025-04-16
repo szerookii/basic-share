@@ -42,7 +42,8 @@ class WeekSelectorState extends ConsumerState<WeekSelector>
 
     List<DateTime> weekDates = [];
     for (int i = 0; i < 7; i++) {
-      weekDates.add(DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day + i));
+      weekDates.add(
+          DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day + i));
     }
     return weekDates;
   }
@@ -121,8 +122,8 @@ class _DayItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Set the locale to French
-    String dayName = DateFormat('E', 'fr').format(date); // Short day name in French (Lun, Mar, ...)
-    String dayNumber = DateFormat('d').format(date); // Day number
+    String dayName = DateFormat('E', 'fr').format(date);
+    String dayNumber = DateFormat('d').format(date);
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
