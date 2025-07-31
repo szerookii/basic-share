@@ -193,7 +193,7 @@ class BasicFit {
 
   static Future<bool> checkAccessResult(String guid, String cardNumber) async {
     final Uri url = Uri.parse(
-        'https://access-result-storage.basic-fit.com/api/AccessControlResult?comId=$guid&card=$cardNumber');
+        'https://access-result-storage.basic-fit.com/api/AccessControlResult?comId=$guid&card=Q$cardNumber');
 
     try {
       debugPrint("[*] Checking access result for GUID: $guid");

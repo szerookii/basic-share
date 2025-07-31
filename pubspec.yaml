@@ -1,7 +1,7 @@
 name: basicshare
 description: "A simple app around Basic-Fit"
 publish_to: 'none'
-version: 1.0.2
+version: 1.0.3
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -26,7 +26,6 @@ dependencies:
   screen_brightness: ^2.0.1
   intl: ^0.20.1
   fl_chart: ^0.70.1
-  aptabase_flutter: ^0.4.1
 
 dev_dependencies:
   build_runner:
