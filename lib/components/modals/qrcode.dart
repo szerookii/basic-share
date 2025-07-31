@@ -206,12 +206,12 @@ class QrcodeModalState extends ConsumerState<QrcodeModal>
                   Icon(
                     Icons.warning_amber_rounded,
                     color: Colors.orange,
-                    size: 4.w,
+                    size: 4.5.w,
                   ),
                   SizedBox(width: 2.w),
                   Expanded(
                     child: Text(
-                      "Visite récente détectée - Scanner à nouveau pourrait déclencher une alert",
+                      "Visite récente détectée - Scanner à nouveau pourrait déclencher une alerte",
                       style: TextStyle(
                         color: Colors.orange,
                         fontSize: 2.8.w,
