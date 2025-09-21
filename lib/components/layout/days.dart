@@ -50,7 +50,7 @@ class WeekSelectorState extends ConsumerState<WeekSelector>
 
   @override
   Widget build(BuildContext context) {
-    final basicFit = ref.read(authNotifierProvider);
+    final auth = ref.watch(authNotifierProvider);
 
     return Card(
       elevation: 4,
@@ -93,7 +93,7 @@ class WeekSelectorState extends ConsumerState<WeekSelector>
             ),
             SizedBox(height: 1.5.h),
             Text(
-              'Ton club: ${basicFit.member?.homeClub ?? ''}',
+              'Ton club: ${auth.member?.homeClub ?? 'Chargement...'}',
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.bold,
@@ -147,7 +147,7 @@ class _DayItem extends StatelessWidget {
         boxShadow: [
           if (isSelected)
             BoxShadow(
-              color: Colors.deepOrange.withOpacity(0.5),
+              color: Colors.deepOrange.withValues(alpha: 0.5),
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),

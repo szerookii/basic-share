@@ -62,15 +62,14 @@ class LoginPage extends ConsumerWidget {
                 return NavigationActionPolicy.CANCEL;
               }
 
-              SharedPreferences prefs = await SharedPreferences.getInstance();
+              SharedPreferencesAsync prefs = SharedPreferencesAsync();
               await prefs.setString("access_token", accessToken);
               await prefs.setString("refresh_token", refreshToken);
               await prefs.setInt("expires", expires);
 
-              BasicFit basicFit = BasicFit(accessToken);
               await ref
                   .read(authNotifierProvider.notifier)
-                  .initialize(accessToken, refreshToken, basicFit);
+                  .initialize(accessToken, refreshToken);
 
               Navigator.push(
                   context,

@@ -86,7 +86,7 @@ class QrcodeModalState extends ConsumerState<QrcodeModal>
                   width: 20.w,
                   height: 20.w,
                   decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.2),
+                    color: Colors.green.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(50),
                   ),
                   child: Icon(
@@ -196,7 +196,7 @@ class QrcodeModalState extends ConsumerState<QrcodeModal>
               margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
               padding: EdgeInsets.all(2.w),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.2),
+                color: Colors.orange.withValues(alpha: 0.2),
                 border: Border.all(color: Colors.orange, width: 1),
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -228,11 +228,17 @@ class QrcodeModalState extends ConsumerState<QrcodeModal>
                 EdgeInsets.only(left: 25.w, right: 25.w, top: 2.h, bottom: 1.h),
             child: Column(
               children: [
-                QrImageView(
-                  data: _qrData,
-                  version: 2,
-                  errorCorrectionLevel: QrErrorCorrectLevel.M,
-                  backgroundColor: Colors.white,
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.deepOrange,
+                  ),
+                  padding: const EdgeInsets.all(4),
+                  child: QrImageView(
+                    data: _qrData,
+                    version: 2,
+                    errorCorrectionLevel: QrErrorCorrectLevel.M,
+                    backgroundColor: Colors.white,
+                  ),
                 ),
                 SizedBox(height: 1.h),
                 AnimatedBuilder(

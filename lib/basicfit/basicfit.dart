@@ -6,6 +6,8 @@ import 'package:basicshare/basicfit/types.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+import 'package:intl/intl.dart';
 
 const String IOS_CLIENT_ID = 'q6KqjlQINmjOC86rqt9JdU_i41nhD_Z4DwygpBxGiIs';
 const String IOS_USER_AGENT =
@@ -18,6 +20,7 @@ const String ANDROID_REDIRECT_URI = 'com.basicfit.trainingapp:/oauthredirect';
 
 const String GRAPHQL_ACCESS_TOKEN =
     'wRd4zwNule_XU0IrbE-DSfF0IcFxSnDCilyboUhYLps';
+const SESSION_COOKIE_NAME = 'connect.sid';
 
 const String BASE_ANDROID_URL = 'https://bfa.basic-fit.com/api';
 const String BASE_URL = 'https://my.basic-fit.com';
@@ -125,6 +128,21 @@ class BasicFit {
     return null;
   }
 
+  Future<Map<String, dynamic>?> loadTodayInflux(String homeClubId) async {
+    try {
+      final influx = await loadInflux(homeClubId.toUpperCase());
+      if (influx != null) {
+        final todayDayInEnglish =
+            DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase();
+        return influx[todayDayInEnglish];
+      }
+      return null;
+    } catch (e) {
+      debugPrint("[*] loadTodayInflux error: $e");
+      return null;
+    }
+  }
+
   Future<Member?> loadMember() async {
     final Uri url = Uri.parse('$BASE_ANDROID_URL/member/info');
 
@@ -153,6 +171,41 @@ class BasicFit {
     } catch (e) {
       debugPrint("[*] Load member error: $e");
       rethrow;
+    }
+
+    return null;
+  }
+
+  Future<List<Friend>?> loadFriends({String? sessionCookie}) async {
+    if (sessionCookie == null) {
+      debugPrint("[*] No session cookie available for friends API");
+      return null;
+    }
+
+    final Uri url = Uri.parse('$BASE_URL/friends/get-friends');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: <String, String>{
+          // TODO: Find a better user-agent for iOS AND Android
+          'User-Agent':
+              'Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/140.0.7339.51 Mobile Safari/537.36',
+          'Accept': '*/*',
+          'Connection': 'keep-alive',
+          'Cookie': 'connect.sid=${Uri.encodeComponent(sessionCookie)}',
+        },
+      ).timeout(const Duration(seconds: 30));
+
+      if (response.statusCode == 200) {
+        final decoded = jsonDecode(response.body);
+        final List<dynamic> friends = decoded as List<dynamic>;
+        return friends.map((friend) => Friend.fromJson(friend)).toList();
+      }
+
+      debugPrint("[*] Load friends failed with status: ${response.statusCode}");
+    } catch (e) {
+      debugPrint("[*] Load friends error: $e");
     }
 
     return null;
@@ -244,6 +297,52 @@ Future<Map<String, dynamic>?> code2token(
   }
 
   return null;
+}
+
+Future<String> token2session(String accessToken) async {
+  final Uri url = Uri.parse('$BASE_URL/sso?token=$accessToken');
+  debugPrint("[*] URL for session cookie: $url");
+
+  try {
+    final response = await Client()
+        .send(
+          Request('GET', url)
+            ..headers.addAll({
+              // TODO: Find a better user-agent for iOS AND Android
+              'User-Agent':
+                  'Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/140.0.7339.51 Mobile Safari/537.36',
+              'Accept': '*/*',
+              'Connection': 'keep-alive',
+            })
+            ..followRedirects = false,
+        )
+        .timeout(const Duration(seconds: 60));
+
+    debugPrint("[*] Response status code: ${response.statusCode}");
+    debugPrint("[*] Response headers: ${response.headers}");
+
+    final setCookie = response.headers['set-cookie'];
+    debugPrint("[*] Set-Cookie header: $setCookie");
+    if (setCookie != null) {
+      final cookies = setCookie.split(',');
+      for (var cookie in cookies) {
+        final trimmedCookie = cookie.trim();
+        if (trimmedCookie.startsWith(SESSION_COOKIE_NAME)) {
+          final sessionCookieParts = trimmedCookie.split('=');
+          if (sessionCookieParts.length > 1) {
+            final encodedValue = sessionCookieParts[1].split(';')[0];
+            final decodedValue = Uri.decodeComponent(encodedValue);
+            debugPrint("[*] Found session cookie: $decodedValue");
+            return decodedValue;
+          }
+        }
+      }
+    }
+  } catch (e) {
+    debugPrint("[*] Token to session error: $e");
+  }
+
+  return '';
 }
 
 Future<Map<String, dynamic>?> refresh2token(

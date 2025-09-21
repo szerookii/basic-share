@@ -73,7 +73,8 @@ class VisitsPage extends ConsumerWidget {
                                 width: 14.w,
                                 height: 14.w,
                                 decoration: BoxDecoration(
-                                  color: Colors.deepOrange.withOpacity(0.15),
+                                  color:
+                                      Colors.deepOrange.withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Icon(

@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 class HealthMeasurement {
   final DateTime date;
   final String id;
@@ -63,6 +65,7 @@ class Member {
   final String latestMembershipEndDate;
   final bool hasDebt;
   final MembershipOptions membershipOptions;
+  final int restrictedEntryTime;
 
   Member({
     required this.name,
@@ -90,6 +93,7 @@ class Member {
     required this.latestMembershipEndDate,
     required this.hasDebt,
     required this.membershipOptions,
+    this.restrictedEntryTime = 0,
   });
 
   factory Member.fromJson(Map<String, dynamic> json) {
@@ -121,6 +125,7 @@ class Member {
       membershipOptions: json['membershipOptions'] != null
           ? MembershipOptions.fromJson(json['membershipOptions'])
           : MembershipOptions(linkedServices: []),
+      restrictedEntryTime: json['restrictedEntryTime'] as int? ?? 0,
     );
   }
 
@@ -151,6 +156,7 @@ class Member {
       'latestMembershipEndDate': latestMembershipEndDate,
       'hasDebt': hasDebt,
       'membershipOptions': membershipOptions.toJson(),
+      'restrictedEntryTime': restrictedEntryTime,
     };
   }
 }
@@ -208,4 +214,106 @@ class TokenExpiredException implements Exception {
 
   @override
   String toString() => 'TokenExpiredException: $message';
+}
+
+class Friend {
+  String? peopleIdG;
+  String? idG;
+  String? firstNameG;
+  String? lastNameG;
+  String? nameG;
+  String? email;
+  bool? hiddenG;
+  String? genderG;
+  Null? changedG;
+  String? prefixG;
+  List<ActiveCardsG>? activeCardsG;
+  String? birthDateG;
+  int? lcidG;
+  bool? confirmed;
+
+  Friend(
+      {this.peopleIdG,
+      this.idG,
+      this.firstNameG,
+      this.lastNameG,
+      this.nameG,
+      this.email,
+      this.hiddenG,
+      this.genderG,
+      this.changedG,
+      this.prefixG,
+      this.activeCardsG,
+      this.birthDateG,
+      this.lcidG,
+      this.confirmed});
+
+  Friend.fromJson(Map<String, dynamic> json) {
+    peopleIdG = json['people_id_g'];
+    idG = json['id_g'];
+    firstNameG = json['first_name_g'];
+    lastNameG = json['last_name_g'];
+    nameG = json['name_g'];
+    email = json['email'];
+    hiddenG = json['hidden_g'];
+    genderG = json['gender_g'];
+    changedG = json['changed_g'];
+    prefixG = json['prefix_g'];
+    if (json['active_cards_g'] != null) {
+      activeCardsG = <ActiveCardsG>[];
+      json['active_cards_g'].forEach((v) {
+        activeCardsG!.add(new ActiveCardsG.fromJson(v));
+      });
+    }
+    birthDateG = json['birth_date_g'];
+    lcidG = json['lcid_g'];
+    confirmed = json['confirmed'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['people_id_g'] = this.peopleIdG;
+    data['id_g'] = this.idG;
+    data['first_name_g'] = this.firstNameG;
+    data['last_name_g'] = this.lastNameG;
+    data['name_g'] = this.nameG;
+    data['email'] = this.email;
+    data['hidden_g'] = this.hiddenG;
+    data['gender_g'] = this.genderG;
+    data['changed_g'] = this.changedG;
+    data['prefix_g'] = this.prefixG;
+    if (this.activeCardsG != null) {
+      data['active_cards_g'] =
+          this.activeCardsG!.map((v) => v.toJson()).toList();
+    }
+    data['birth_date_g'] = this.birthDateG;
+    data['lcid_g'] = this.lcidG;
+    data['confirmed'] = this.confirmed;
+    return data;
+  }
+}
+
+class ActiveCardsG {
+  String? cardNumber;
+  String? joinDate;
+  String? startDate;
+  Null? endDate;
+
+  ActiveCardsG({this.cardNumber, this.joinDate, this.startDate, this.endDate});
+
+  ActiveCardsG.fromJson(Map<String, dynamic> json) {
+    cardNumber = json['cardNumber'];
+    joinDate = json['joinDate'];
+    startDate = json['startDate'];
+    endDate = json['endDate'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['cardNumber'] = this.cardNumber;
+    data['joinDate'] = this.joinDate;
+    data['startDate'] = this.startDate;
+    data['endDate'] = this.endDate;
+    return data;
+  }
 }

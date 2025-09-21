@@ -33,11 +33,10 @@ Future main() async {
 }
 
 final dataProvider = FutureProvider<bool>((ref) async {
-  final prefs = await SharedPreferences.getInstance();
-
-  String? accessToken = prefs.getString('access_token');
-  String? refreshToken = prefs.getString('refresh_token');
-  final expires = prefs.getInt('expires');
+  final prefs = SharedPreferencesAsync();
+  String? accessToken = await prefs.getString('access_token');
+  String? refreshToken = await prefs.getString('refresh_token');
+  final expires = await prefs.getInt('expires');
 
   debugPrint('[*] accessToken: $accessToken');
   debugPrint('[*] refreshToken: $refreshToken');
@@ -78,10 +77,13 @@ final dataProvider = FutureProvider<bool>((ref) async {
       refreshToken = newRefreshToken;
     }
 
-    final basicFit = BasicFit(accessToken as String);
+    if (accessToken == null || refreshToken == null) {
+      throw Exception('No tokens found after refresh');
+    }
+
     await ref
         .read(authNotifierProvider.notifier)
-        .initialize(accessToken, refreshToken as String, basicFit);
+        .initialize(accessToken, refreshToken);
 
     return true;
   }

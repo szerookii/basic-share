@@ -1,5 +1,6 @@
 import 'package:basicshare/views/dashboard.dart';
 import 'package:basicshare/views/visits.dart';
+import 'package:basicshare/views/friends.dart';
 import 'package:flutter/material.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -15,6 +16,7 @@ class _MainNavigationState extends State<MainNavigation> {
   static const List<Widget> _pages = [
     DashboardPage(),
     VisitsPage(),
+    FriendsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -36,6 +38,10 @@ class _MainNavigationState extends State<MainNavigation> {
           BottomNavigationBarItem(
             icon: Icon(Icons.fitness_center),
             label: 'Visites',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Amis',
           ),
         ],
         currentIndex: _selectedIndex,

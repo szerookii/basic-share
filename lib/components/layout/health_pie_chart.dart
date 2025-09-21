@@ -123,7 +123,7 @@ class _HealthPieChartState extends State<HealthPieChart> {
             shape: BoxShape.circle,
           ),
         ),
-        SizedBox(width: 12),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

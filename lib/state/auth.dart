@@ -2,7 +2,6 @@ import 'package:basicshare/basicfit/basicfit.dart';
 import 'package:basicshare/basicfit/types.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthState {
@@ -12,7 +11,9 @@ class AuthState {
   final Member? member;
   final List<Visit>? visits;
   final List<HealthMeasurement>? healthMeasurements;
+  final List<Friend>? friends;
   final Map<String, dynamic>? todayInflux;
+  final String? sessionCookie;
   final String? errorMessage;
   final bool isLoading;
   final String? persistentGuid;
@@ -24,7 +25,9 @@ class AuthState {
     this.member,
     this.visits,
     this.healthMeasurements,
+    this.friends,
     this.todayInflux,
+    this.sessionCookie,
     this.errorMessage,
     this.isLoading = false,
     this.persistentGuid,
@@ -37,7 +40,9 @@ class AuthState {
     Member? member,
     List<Visit>? visits,
     List<HealthMeasurement>? healthMeasurements,
+    List<Friend>? friends,
     Map<String, dynamic>? todayInflux,
+    String? sessionCookie,
     String? errorMessage,
     bool? isLoading,
     String? persistentGuid,
@@ -49,7 +54,9 @@ class AuthState {
       member: member ?? this.member,
       visits: visits ?? this.visits,
       healthMeasurements: healthMeasurements ?? this.healthMeasurements,
+      friends: friends ?? this.friends,
       todayInflux: todayInflux ?? this.todayInflux,
+      sessionCookie: sessionCookie ?? this.sessionCookie,
       errorMessage: errorMessage,
       isLoading: isLoading ?? this.isLoading,
       persistentGuid: persistentGuid ?? this.persistentGuid,
@@ -66,14 +73,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
             basicFit: null,
             member: null,
             visits: null,
+            healthMeasurements: null,
+            friends: null,
             todayInflux: null,
+            sessionCookie: null,
             errorMessage: null,
             isLoading: false,
           ),
         );
 
-  Future<void> initialize(
-      String accessToken, String refreshToken, BasicFit basicFit) async {
+  Future<void> initialize(String accessToken, String refreshToken) async {
+    final basicFit = BasicFit(accessToken);
     state = state.copyWith(
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -83,55 +93,41 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
 
     try {
-      Member? member = await basicFit.loadMember();
-      if (member == null) {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage:
-              "Impossible de charger les informations du membre. Certaines fonctionnalités peuvent être limitées.",
-        );
-        debugPrint("[*] Warning: Could not load member information");
-        return;
-      }
-
+      final member = await basicFit.loadMember();
       state = state.copyWith(member: member);
 
+      // Get session cookie for friends API
+      final sessionCookie = await token2session(accessToken);
+      state = state.copyWith(sessionCookie: sessionCookie);
+
+      // Load additional data
+      final visits = await basicFit.loadVisits();
+      final healthMeasurements = await basicFit.loadHealthMeasurements();
+
+      List<Friend>? friends;
       try {
-        final visits = await basicFit.loadVisits();
-        if (visits != null) {
-          state = state.copyWith(visits: visits);
-        }
+        friends = await basicFit.loadFriends(sessionCookie: sessionCookie);
       } catch (e) {
-        debugPrint("[*] Warning: Could not load visits: $e");
+        debugPrint("[*] Warning: Could not load friends: $e");
       }
 
-      try {
-        final influx =
-            await basicFit.loadInflux(member.homeClubId.toUpperCase());
-        if (influx != null) {
-          final todayDayInEnglish =
-              DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase();
-          final todayInflux = influx[todayDayInEnglish];
-          state = state.copyWith(todayInflux: todayInflux);
-        }
-      } catch (e) {
-        debugPrint("[*] Warning: Could not load influx data: $e");
+      Map<String, dynamic>? todayInflux;
+      if (member != null) {
+        todayInflux = await basicFit.loadTodayInflux(member.homeClubId);
       }
 
-      try {
-        final healthMeasurements = await basicFit.loadHealthMeasurements();
-        state = state.copyWith(healthMeasurements: healthMeasurements);
-      } catch (e) {
-        debugPrint("[*] Warning: Could not load health measurements: $e");
-      }
-
-      state = state.copyWith(isLoading: false);
+      state = state.copyWith(
+        visits: visits,
+        healthMeasurements: healthMeasurements,
+        friends: friends,
+        todayInflux: todayInflux,
+        isLoading: false,
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: "Erreur lors du chargement des données: $e",
+        errorMessage: "Erreur: $e",
       );
-      debugPrint("[*] Error during initialization: $e");
     }
   }
 
@@ -143,68 +139,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(refreshToken: value);
   }
 
-  void setBasicFit(BasicFit newBasicFit) {
-    state = state.copyWith(basicFit: newBasicFit);
-  }
-
-  void setMember(Member newMember) {
-    state = state.copyWith(member: newMember);
-  }
-
-  void setVisits(List<Visit> newVisits) {
-    state = state.copyWith(visits: newVisits);
-  }
-
-  Future<void> retryLoadMember() async {
-    if (state.basicFit == null) {
-      return;
-    }
-
+  Future<void> refreshTokens() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      Member? member = await state.basicFit!.loadMember();
-      if (member == null) {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage: "Impossible de charger les informations du membre",
-        );
-        return;
-      }
-
-      state = state.copyWith(member: member, isLoading: false);
-
-      try {
-        final visits = await state.basicFit!.loadVisits();
-        if (visits != null) {
-          state = state.copyWith(visits: visits);
-        }
-      } catch (e) {
-        debugPrint("[*] Warning: Could not load visits during retry: $e");
-      }
-
-      try {
-        final influx =
-            await state.basicFit!.loadInflux(member.homeClubId.toUpperCase());
-        if (influx != null) {
-          final todayDayInEnglish =
-              DateFormat('EEEE', 'en_US').format(DateTime.now()).toLowerCase();
-          final todayInflux = influx[todayDayInEnglish];
-          state = state.copyWith(todayInflux: todayInflux);
-        }
-      } catch (e) {
-        debugPrint("[*] Warning: Could not load influx data during retry: $e");
-      }
+      await _handleTokenExpired();
     } catch (e) {
-      if (e is TokenExpiredException) {
-        await _handleTokenExpired();
-      } else {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage: "Erreur lors du rechargement: $e",
-        );
-        debugPrint("[*] Error during member reload: $e");
-      }
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: "Erreur lors du rafraîchissement: $e",
+      );
+      debugPrint("[*] Error during token refresh: $e");
     }
   }
 
@@ -233,8 +178,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
 
         debugPrint("[*] Token refreshed successfully");
-
-        await retryLoadMember();
       } else {
         state = state.copyWith(
           isLoading: false,
