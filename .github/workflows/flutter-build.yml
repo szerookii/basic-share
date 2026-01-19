@@ -17,21 +17,32 @@ jobs:
         with:
           flutter-version: '3.38.3'
           channel: stable
+          cache: true
+      
+      - name: Cache Flutter packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
       
       - name: Get dependencies
         run: flutter pub get
       
-      - name: Build iOS (no code signing)
+      - name: Build iOS IPA (no code signing)
         run: |
-          flutter build ios \
+          flutter build ipa \
             --no-codesign \
             --release
       
-      - name: Upload iOS build
+      - name: Upload iOS IPA
         uses: actions/upload-artifact@v4
         with:
-          name: ios-build
-          path: build/ios/iphoneos/Runner.app
+          name: ios-ipa
+          path: build/ios/ipa/
           retention-days: 5
 
   build-android:
@@ -44,6 +55,36 @@ jobs:
         with:
           flutter-version: '3.38.3'
           channel: stable
+          cache: true
+      
+      - name: Cache Flutter packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            .dart_tool
+          key: ${{ runner.os }}-flutter-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-
+      
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      
+      - name: Cache Android SDK & NDK
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/lib/android/sdk
+          key: ${{ runner.os }}-android-sdk-${{ hashFiles('android/build.gradle.kts', 'android/app/build.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-android-sdk-
       
       - name: Get dependencies
         run: flutter pub get
