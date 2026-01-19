@@ -61,20 +61,7 @@ android {
         }
     }
 
-    // Configuration pour les APK universelles
-    bundle {
-        // Désactiver la génération automatique de splits
-        density.enableSplit = false
-        abi.enableSplit = false
-        language.enableSplit = false
-    }
 
-    flavorDimensions += "default"
-    productFlavors {
-        create("universal") {
-            dimension = "default"
-        }
-    }
 }
 
 flutter {

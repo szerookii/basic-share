@@ -48,7 +48,7 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
       
-      - name: Decode Android keystore
+      - name: Decode Android keystore & Create key.properties
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
@@ -57,15 +57,18 @@ jobs:
         run: |
           mkdir -p android/app
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
+          
+          # Create key.properties for signing
+          cat > android/key.properties << EOF
+          storePassword=$ANDROID_STORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=app/upload-keystore.jks
+          EOF
       
       - name: Build Android APK
-        env:
-           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
-           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
-           flutter build apk \
-             --release
+          flutter build apk --release
       
       - name: Upload Android APK
         uses: actions/upload-artifact@v4
