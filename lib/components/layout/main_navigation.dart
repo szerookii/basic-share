@@ -55,6 +55,7 @@ class _MainNavigationState extends State<MainNavigation> {
         unselectedItemColor: Colors.white54,
         backgroundColor: Colors.grey.shade900,
         type: BottomNavigationBarType.fixed,
+        elevation: 8,
         onTap: _onItemTapped,
       ),
     );

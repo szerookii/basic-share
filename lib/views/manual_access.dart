@@ -158,7 +158,7 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
                 "Renseigne un numéro de carte et un device ID. Sauvegarde-les pour les réutiliser plus tard lors du partage.",
                 style: TextStyle(
                   color: Colors.white70,
-                  fontSize: 12.sp,
+                  fontSize: 15.sp,
                 ),
               ),
               SizedBox(height: 3.h),
@@ -168,8 +168,8 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
                 "Accès enregistrés",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 6.w,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 7.5.w,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 1.h),
@@ -203,7 +203,7 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
             "Numéro de carte",
             style: TextStyle(
               color: Colors.white70,
-              fontSize: 11.sp,
+              fontSize: 15.sp,
             ),
           ),
           SizedBox(height: 0.5.h),
@@ -227,7 +227,7 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
             "Device ID",
             style: TextStyle(
               color: Colors.white70,
-              fontSize: 11.sp,
+              fontSize: 15.sp,
             ),
           ),
           SizedBox(height: 0.5.h),
@@ -264,15 +264,15 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: Colors.white,
                       ),
                     )
-                  : const Icon(Icons.save_alt),
+                  : const Icon(Icons.save_alt, color: Colors.white),
               label: Text(
                 _isSaving ? "Enregistrement..." : "Sauvegarder pour plus tard",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 12.sp,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -297,57 +297,80 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
           deviceId: access.deviceId,
         ),
         child: Padding(
-          padding: EdgeInsets.all(4.w),
-          child: Row(
+          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 3.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 12.w,
-                height: 12.w,
-                decoration: BoxDecoration(
-                  color: Colors.deepOrange.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.credit_card,
-                  color: Colors.deepOrange,
-                  size: 7.w,
-                ),
-              ),
-              SizedBox(width: 4.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Carte ${access.cardNumber}",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 0.8.h),
-                    Text(
-                      "Device ID: ${access.deviceId}",
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 11.sp,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
+              Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.copy, color: Colors.white70),
-                    tooltip: "Copier",
-                    onPressed: () => _copyToClipboard(access),
+                  Container(
+                    width: 12.w,
+                    height: 12.w,
+                    decoration: BoxDecoration(
+                      color: Colors.deepOrange.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.credit_card,
+                      color: Colors.deepOrange,
+                      size: 6.w,
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    tooltip: "Supprimer",
-                    onPressed: () => _deleteAccess(access.id),
+                  SizedBox(width: 3.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Carte ${access.cardNumber}",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 0.5.h),
+                        Text(
+                          access.deviceId,
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 15.sp,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 2.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _copyToClipboard(access),
+                      icon: const Icon(Icons.copy),
+                      label: const Text("Copier"),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white70,
+                        side: BorderSide(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 2.w),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _deleteAccess(access.id),
+                      icon: const Icon(Icons.delete_outline),
+                      label: const Text("Supprimer"),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -371,7 +394,7 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
         children: [
           Icon(
             Icons.inventory_2_outlined,
-            size: 32.sp,
+            size: 7.w,
             color: Colors.white38,
           ),
           SizedBox(height: 1.h),
@@ -379,7 +402,7 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
             "Aucun accès enregistré pour le moment.",
             style: TextStyle(
               color: Colors.white70,
-              fontSize: 12.sp,
+              fontSize: 15.sp,
             ),
             textAlign: TextAlign.center,
           ),
@@ -388,7 +411,7 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
             "Crée ton premier duo carte/device pour l'avoir toujours sous la main.",
             style: TextStyle(
               color: Colors.white60,
-              fontSize: 11.sp,
+              fontSize: 14.sp,
             ),
             textAlign: TextAlign.center,
           ),

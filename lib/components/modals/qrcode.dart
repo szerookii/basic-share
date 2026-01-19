@@ -170,100 +170,104 @@ class QrcodeModalState extends ConsumerState<QrcodeModal>
     final hasRecentVisit = _hasRecentVisit();
 
     return FractionallySizedBox(
-      heightFactor: 0.8,
+      heightFactor: 0.85,
       alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Ton QR Code",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 7.w,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 1.0),
-          Text(
-            "Utilise ce QR code pour accéder au club",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 3.5.w,
-            ),
-          ),
-          if (hasRecentVisit)
-            Container(
-              margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
-              padding: EdgeInsets.all(2.w),
-              decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
-                border: Border.all(color: Colors.orange, width: 1),
-                borderRadius: BorderRadius.circular(8),
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Ton QR Code",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 7.w,
+                fontWeight: FontWeight.bold,
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.orange,
-                    size: 4.5.w,
-                  ),
-                  SizedBox(width: 2.w),
-                  Expanded(
-                    child: Text(
-                      "Visite récente détectée - Scanner à nouveau pourrait déclencher une alerte",
-                      style: TextStyle(
-                        color: Colors.orange,
-                        fontSize: 2.8.w,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 1.5.h),
+            Text(
+              "Utilise ce QR code pour accéder au club",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 3.5.w,
+              ),
+            ),
+            SizedBox(height: 1.5.h),
+            if (hasRecentVisit)
+              Container(
+                margin: EdgeInsets.only(top: 1.h, left: 5.w, right: 5.w),
+                padding: EdgeInsets.all(2.w),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.2),
+                  border: Border.all(color: Colors.orange, width: 1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: Colors.orange,
+                      size: 4.5.w,
                     ),
-                  ),
-                ],
+                    SizedBox(width: 2.w),
+                    Expanded(
+                      child: Text(
+                        "Visite récente détectée - Scanner à nouveau pourrait déclencher une alerte",
+                        style: TextStyle(
+                          color: Colors.orange,
+                          fontSize: 2.8.w,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            SizedBox(height: 2.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.deepOrange,
+                ),
+                padding: const EdgeInsets.all(4),
+                child: QrImageView(
+                  data: _qrData,
+                  version: 2,
+                  errorCorrectionLevel: QrErrorCorrectLevel.M,
+                  backgroundColor: Colors.white,
+                ),
               ),
             ),
-          Padding(
-            padding:
-                EdgeInsets.only(left: 25.w, right: 25.w, top: 2.h, bottom: 1.h),
-            child: Column(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.deepOrange,
-                  ),
-                  padding: const EdgeInsets.all(4),
-                  child: QrImageView(
-                    data: _qrData,
-                    version: 2,
-                    errorCorrectionLevel: QrErrorCorrectLevel.M,
-                    backgroundColor: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 1.h),
-                AnimatedBuilder(
-                  animation: _animation,
-                  builder: (context, child) {
-                    return LinearProgressIndicator(
-                      value: _animation.value,
-                      backgroundColor: Colors.white30,
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.orange),
-                    );
-                  },
-                ),
-              ],
+            SizedBox(height: 1.5.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return LinearProgressIndicator(
+                    value: _animation.value,
+                    backgroundColor: Colors.white30,
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.orange),
+                  );
+                },
+              ),
             ),
-          ),
-          Text(
-            "Carte ${basicFit.member?.cardnumber}",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 3.5.w,
+            SizedBox(height: 2.h),
+            Text(
+              "Carte ${basicFit.member?.cardnumber}",
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 3.5.w,
+              ),
             ),
-          ),
-          SizedBox(height: 20.h),
-        ],
+            SizedBox(height: 1.5.h),
+          ],
+        ),
       ),
     );
   }
