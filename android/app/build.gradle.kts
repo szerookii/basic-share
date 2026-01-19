@@ -5,6 +5,13 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Load signing configuration from key.properties
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = java.util.Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "fr.szeroki.basicshare"
     compileSdk = flutter.compileSdkVersion
@@ -19,6 +26,20 @@ android {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
+    // Signing configuration
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties.getProperty("keyAlias") ?: ""
+            keyPassword = keystoreProperties.getProperty("keyPassword") ?: ""
+            storeFile = if (keystoreProperties.containsKey("storeFile")) {
+                file(keystoreProperties.getProperty("storeFile"))
+            } else {
+                null
+            }
+            storePassword = keystoreProperties.getProperty("storePassword") ?: ""
+        }
+    }
+
     defaultConfig {
         applicationId = "fr.szeroki.basicshare"
         minSdk = flutter.minSdkVersion
@@ -29,7 +50,11 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

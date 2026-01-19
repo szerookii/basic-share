@@ -1,0 +1,16 @@
+# Android Keystore Configuration
+# This is an EXAMPLE file. Never commit your actual key.properties to Git!
+# Copy this file and replace the values with your own:
+#   cp android/key.properties.example android/key.properties
+
+# Password for the keystore (the entire keystore)
+storePassword=YOUR_STORE_PASSWORD_HERE
+
+# Password for the key alias
+keyPassword=YOUR_KEY_PASSWORD_HERE
+
+# The alias of the key you want to use
+keyAlias=upload-key
+
+# Path to the keystore file (relative to android/ directory)
+storeFile=app/upload-keystore.jks
