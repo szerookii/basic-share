@@ -55,10 +55,7 @@ jobs:
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
-          # Crée le dossier android/app si inexistant
           mkdir -p android/app
-          
-          # Décode la keystore depuis base64
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/upload-keystore.jks
       
       - name: Build Android APK
