@@ -44,3 +44,25 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .DS_Store
+
+# Android signing - NEVER commit keystores or key properties
+android/app/upload-keystore.jks
+android/app/*.jks
+android/key.properties
+android/app/key.properties
+.android/
+
+# iOS signing
+ios/Pods/
+ios/Podfile.lock
+ios/Flutter/Generated.xcconfig
+*.mobileprovision
+*.p8
+*.p12
+*.cer
+*.key
+
+# Environment variables
+.env
+.env.local
+.env.*.local
