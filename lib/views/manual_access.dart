@@ -1,7 +1,9 @@
+import 'package:basicshare/components/modals/manual_access_qrcode.dart';
 import 'package:basicshare/state/saved_access.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:screen_brightness/screen_brightness.dart';
 import 'package:sizer/sizer.dart';
 
 class ManualAccessPage extends ConsumerStatefulWidget {
@@ -34,11 +36,15 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
     });
 
     final notifier = ref.read(savedAccessProvider.notifier);
+    final cardNumber = _cardController.text.trim();
+    final deviceId = _deviceController.text.trim();
+    var didSave = false;
     try {
       await notifier.addAccess(
-        cardNumber: _cardController.text,
-        deviceId: _deviceController.text,
+        cardNumber: cardNumber,
+        deviceId: deviceId,
       );
+      didSave = true;
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -61,6 +67,10 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
           _isSaving = false;
         });
       }
+    }
+
+    if (didSave && mounted) {
+      await _showAccessQrCode(cardNumber: cardNumber, deviceId: deviceId);
     }
   }
 
@@ -98,6 +108,29 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
         backgroundColor: Colors.green,
       ),
     );
+  }
+
+  Future<void> _showAccessQrCode({
+    required String cardNumber,
+    required String deviceId,
+  }) async {
+    await ScreenBrightness.instance.setApplicationScreenBrightness(1.0);
+    try {
+      if (!mounted) return;
+      await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        showDragHandle: true,
+        builder: (context) {
+          return ManualAccessQrcodeModal(
+            cardNumber: cardNumber,
+            deviceId: deviceId,
+          );
+        },
+      );
+    } finally {
+      await ScreenBrightness.instance.resetApplicationScreenBrightness();
+    }
   }
 
   @override
@@ -259,7 +292,10 @@ class ManualAccessPageState extends ConsumerState<ManualAccessPage> {
       elevation: 4,
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
-        onTap: () => _prefillAccess(access),
+        onTap: () => _showAccessQrCode(
+          cardNumber: access.cardNumber,
+          deviceId: access.deviceId,
+        ),
         child: Padding(
           padding: EdgeInsets.all(4.w),
           child: Row(
