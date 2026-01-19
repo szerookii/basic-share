@@ -19,6 +19,19 @@ class _LineChartSample2State extends State<LineChartSample2> {
 
   bool showAvg = false;
 
+  List<FlSpot> _normalizeData(List<FlSpot>? data) {
+    if (data == null || data.isEmpty) return [];
+
+    double maxValue =
+        data.fold(0.0, (max, spot) => spot.y > max ? spot.y : max);
+    if (maxValue == 0) return data;
+
+    final normalized =
+        data.map((spot) => FlSpot(spot.x, (spot.y / maxValue) * 100)).toList();
+
+    return normalized;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -102,6 +115,8 @@ class _LineChartSample2State extends State<LineChartSample2> {
   }
 
   LineChartData mainData() {
+    final normalizedData = _normalizeData(widget.lineData);
+
     return LineChartData(
       gridData: const FlGridData(
         show: false,
@@ -136,10 +151,10 @@ class _LineChartSample2State extends State<LineChartSample2> {
       minX: -1,
       maxX: 24,
       minY: 0,
-      maxY: 5,
+      maxY: 100,
       lineBarsData: [
         LineChartBarData(
-          spots: widget.lineData ?? [],
+          spots: normalizedData,
           isCurved: true,
           gradient: LinearGradient(
             colors: gradientColors,
@@ -164,7 +179,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
           getTooltipItems: (List<LineBarSpot> touchedSpots) {
             return touchedSpots.map((LineBarSpot spot) {
               return LineTooltipItem(
-                'Heure: ${spot.x.toInt()}h',
+                'Heure: ${spot.x.toInt()}h\nCapacité: ${spot.y.toStringAsFixed(1)}%',
                 const TextStyle(color: Colors.white),
               );
             }).toList();

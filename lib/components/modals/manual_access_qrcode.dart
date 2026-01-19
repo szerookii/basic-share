@@ -64,75 +64,71 @@ class ManualAccessQrcodeModalState extends State<ManualAccessQrcodeModal>
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
-      heightFactor: 0.8,
+      heightFactor: 0.85,
       alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "QR Code manuel",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 7.w,
-              fontWeight: FontWeight.bold,
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "QR Code manuel",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 7.w,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 1.0),
-          Text(
-            "Utilise ce QR code pour acceder au club",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 3.5.w,
+            SizedBox(height: 1.5.h),
+            Text(
+              "Utilise ce QR code pour acceder au club",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 3.5.w,
+              ),
             ),
-          ),
-          Padding(
-            padding:
-                EdgeInsets.only(left: 25.w, right: 25.w, top: 2.h, bottom: 1.h),
-            child: Column(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.deepOrange,
-                  ),
-                  padding: const EdgeInsets.all(4),
-                  child: QrImageView(
-                    data: _qrData,
-                    version: QrVersions.auto,
-                    errorCorrectionLevel: QrErrorCorrectLevel.M,
-                    backgroundColor: Colors.white,
-                  ),
+            SizedBox(height: 2.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.deepOrange,
                 ),
-                SizedBox(height: 1.h),
-                AnimatedBuilder(
-                  animation: _animation,
-                  builder: (context, child) {
-                    return LinearProgressIndicator(
-                      value: _animation.value,
-                      backgroundColor: Colors.white30,
-                      valueColor:
-                          const AlwaysStoppedAnimation<Color>(Colors.orange),
-                    );
-                  },
+                padding: const EdgeInsets.all(4),
+                child: QrImageView(
+                  data: _qrData,
+                  version: QrVersions.auto,
+                  errorCorrectionLevel: QrErrorCorrectLevel.M,
+                  backgroundColor: Colors.white,
                 ),
-              ],
+              ),
             ),
-          ),
-          Text(
-            "Carte ${widget.cardNumber}",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 3.5.w,
+            SizedBox(height: 1.5.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: AnimatedBuilder(
+                animation: _animation,
+                builder: (context, child) {
+                  return LinearProgressIndicator(
+                    value: _animation.value,
+                    backgroundColor: Colors.white30,
+                    valueColor:
+                        const AlwaysStoppedAnimation<Color>(Colors.orange),
+                  );
+                },
+              ),
             ),
-          ),
-          Text(
-            "Device ID ${widget.deviceId}",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 3.5.w,
+            SizedBox(height: 2.h),
+            Text(
+              "Carte ${widget.cardNumber}",
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 3.5.w,
+              ),
             ),
-          ),
-          SizedBox(height: 20.h),
-        ],
+            SizedBox(height: 1.5.h),
+          ],
+        ),
       ),
     );
   }
