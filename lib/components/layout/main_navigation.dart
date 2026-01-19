@@ -1,6 +1,7 @@
 import 'package:basicshare/views/dashboard.dart';
 import 'package:basicshare/views/visits.dart';
 import 'package:basicshare/views/friends.dart';
+import 'package:basicshare/views/manual_access.dart';
 import 'package:flutter/material.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -17,6 +18,7 @@ class _MainNavigationState extends State<MainNavigation> {
     DashboardPage(),
     VisitsPage(),
     FriendsPage(),
+    ManualAccessPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -42,6 +44,10 @@ class _MainNavigationState extends State<MainNavigation> {
           BottomNavigationBarItem(
             icon: Icon(Icons.people),
             label: 'Amis',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.lock_clock),
+            label: 'Accès',
           ),
         ],
         currentIndex: _selectedIndex,
