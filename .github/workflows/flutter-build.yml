@@ -15,7 +15,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: pubspec.yaml
+          flutter-version: '3.38.3'
+          channel: stable
       
       - name: Get dependencies
         run: flutter pub get
@@ -41,7 +42,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version-file: pubspec.yaml
+          flutter-version: '3.38.3'
+          channel: stable
       
       - name: Get dependencies
         run: flutter pub get
